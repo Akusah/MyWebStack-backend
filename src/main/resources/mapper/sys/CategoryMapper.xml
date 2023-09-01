@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sys.mapper.CategoryMapper">
+
+    <select id="getMainCategory" resultType="com.example.sys.entity.Category">
+        select * from db_category
+        where pid is null
+    </select>
+
+    <select id="getChildrenCategory" resultType="com.example.sys.entity.Category" parameterType="Integer">
+        select * from db_category
+        where pid = #{categoryId}
+    </select>
+
+    <select id="getWebListUnderCategory" resultType="com.example.sys.entity.Category">
+
+    </select>
+
+</mapper>

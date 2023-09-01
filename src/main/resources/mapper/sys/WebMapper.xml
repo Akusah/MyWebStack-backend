@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.sys.mapper.WebMapper">
+
+    <select id="getWebs" resultType="com.example.sys.entity.Web">
+        select * from db_web
+        where category_id = #{categoryId}
+    </select>
+
+    <select id="getWebTitle" parameterType="Integer" resultType="String">
+        select web_title from db_web
+        where web_id = #{webId}
+    </select>
+
+
+</mapper>
