@@ -31,26 +31,12 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
 
-
-
-//    /**
-//     * 注册方法
-//     *
-//     * @param user 用户
-//     * @return {@link Result}<{@link ?}>
-//     */
-//    @PostMapping("/register")
-//    public Result<?> register(@RequestBody User user){
-//        try {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-//            userService.save(user);
-//            return Result.success("注册成功！");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.fail("发生未知错误，注册失败");
-//        }
-//    }
-
+    /**
+     * 根据token获取用户信息
+     *
+     * @param token
+     * @return {@link Result}<{@link User}>
+     */
 
     @GetMapping("/getUserByToken")
     public Result<User> getUserByToken(@RequestParam("token") String token){

@@ -26,7 +26,6 @@ public class AuthorizeController {
     //邮箱正则表达式
     private final String EMAIL_REGEXP = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
-    //发送邮箱功能
 
 
     @PostMapping("/register")

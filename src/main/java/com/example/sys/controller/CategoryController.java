@@ -35,6 +35,12 @@ public class CategoryController {
     private RedissonClient redissonClient;
 
 
+    /**
+     * 获取目录列表
+     *
+     * @return {@link Result}<{@link List}<{@link Category}>>
+     */
+
     @GetMapping("/getCategoryList")
     public Result<List<Category>> getCategoryList(){
         try {
@@ -56,6 +62,12 @@ public class CategoryController {
         }
 
     }
+
+    /**
+     * 获取当前具有网站列表的一级或二级目录
+     *
+     * @return {@link Result}<{@link List}<{@link Category}>>
+     */
 
     @GetMapping("/getWebListUnderCategory")
     public Result<List<Category>> getWebListUnderCategory(){

@@ -5,10 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.common.vo.Result;
 import com.example.sys.entity.*;
 import com.example.sys.service.*;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +43,9 @@ public class AdminController {
 
     @Autowired
     ICategoryService categoryService;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     /**
@@ -133,6 +141,12 @@ public class AdminController {
     }
 
 
+    /**
+     * 获取指定数量的Web点击量信息
+     *
+     * @param num
+     * @return {@link Result}<{@link ?}>
+     */
 
     @GetMapping("/getWebInfo")
     public Result<?> getWebInfo(@RequestParam(defaultValue = "5") Integer num) {
@@ -145,19 +159,20 @@ public class AdminController {
     }
 
 
+    /**
+     * 分页获取Web
+     *
+     * @param currentPage
+     * @param pageSize
+     * @return {@link Result}<{@link ?}>
+     */
+
     @GetMapping("/getWebsByPage")
     public Result<?> getWebsByPage(@RequestParam(defaultValue = "1") Integer currentPage,
                                            @RequestParam(defaultValue = "5") Integer pageSize){
 
         Map<String,Object> webPage = webService.getWebsByPage(currentPage,pageSize);
         return Result.success(webPage);
-    }
-
-
-    @GetMapping("/getMainCategory")
-    public Result<List<Category>> getMainCategory(){
-        List<Category> webList = categoryService.getMainCategory();
-        return Result.success(webList,"获取成功！");
     }
 
     /**
@@ -177,4 +192,105 @@ public class AdminController {
             return Result.fail("发生未知错误，更新网页失败");
         }
     }
+
+    /**
+     * 添加网站
+     *
+     * @param web Web实体类
+     * @return {@link Result}<{@link ?}>
+     */
+
+    @PostMapping("/addWeb")
+    public Result<?> addWeb(@RequestBody Web web){
+        try {
+            webService.save(web);
+            return Result.success("保存成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("发生未知错误");
+        }
+    }
+
+
+    /**
+     * 获取主目录
+     *
+     * @return {@link Result}<{@link List}<{@link Category}>>
+     */
+
+    @GetMapping("/getMainCategory")
+    public Result<List<Category>> getMainCategory(){
+        List<Category> webList = categoryService.getMainCategory();
+        return Result.success(webList,"获取成功！");
+    }
+
+    /**
+     * 添加目录
+     *
+     * @param category
+     * @return {@link Result}<{@link ?}>
+     */
+
+    @PostMapping("/addCategory")
+    public Result<?> addCategory(@RequestBody Category category){
+        try {
+            if (categoryService.save(category)){
+                // 删除Redis缓存
+                redissonClient.getKeys().delete("categoryList");
+                return Result.success("添加目录成功");
+            }else {
+                return Result.fail("发生未知错误，添加目录失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.fail("发生未知错误，添加目录失败");
+        }
+    }
+
+    /**
+     * 删除目录
+     *
+     * @param list
+     * @return {@link Result}<{@link ?}>
+     */
+
+    @PostMapping("/deleteCategory")
+    public Result<?> deleteCategory(@RequestBody ArrayList<Integer> list){
+        redissonClient.getKeys().delete("categoryList");
+        return categoryService.deleteCategory(list);
+    }
+
+    /**
+     * 上传图片logo
+     *
+     * @param file
+     * @return {@link Result}<{@link ?}>
+     */
+
+    @PostMapping("/uploadFile")
+    public Result<?> uploadFile(@RequestParam(value = "file",required = false) MultipartFile file){
+        if (file.isEmpty()){
+            return Result.fail();
+        }
+        String OriginalFilename = file.getOriginalFilename();
+
+        //为了防止重名覆盖，获取系统时间戳+原始文件的后缀名
+        String fileName = System.currentTimeMillis()+"." + OriginalFilename.substring(OriginalFilename.lastIndexOf(".")+1);
+        //设置后台保存位置
+        String path = "C:\\Users\\10184\\Desktop\\Projects\\WebProject\\WebStack\\MyWebStack-frontend\\public\\assets\\images\\logos\\";
+        File dest = new File(path+fileName);
+
+        if (!dest.getParentFile().exists()){
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+            return Result.success("图片上传成功！",fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.fail();
+        }
+    }
+
+
 }

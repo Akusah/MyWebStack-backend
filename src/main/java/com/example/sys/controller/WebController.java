@@ -105,7 +105,12 @@ public class WebController {
     }
 
 
-
+    /**
+     * 根据WebId获取Web信息
+     *
+     * @param webId
+     * @return {@link Result}<{@link Web}>
+     */
 
     @GetMapping("/getWebById/{webId}")
     public Result<Web> getWebById(@PathVariable Integer webId){

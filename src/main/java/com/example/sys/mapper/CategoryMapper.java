@@ -21,4 +21,7 @@ public interface CategoryMapper extends BaseMapper<Category> {
     List<Category> getChildrenCategory(Integer categoryId);
 
 
+    List<Integer> getMainCategoryId();
+
+    List<Integer> getExistCategoryId();
 }

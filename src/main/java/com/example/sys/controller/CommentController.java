@@ -39,8 +39,12 @@ public class CommentController {
     private RedissonClient redissonClient;
 
 
-
-
+    /**
+     * 发布评论
+     *
+     * @param comment
+     * @return {@link Result}<{@link ?}>
+     */
 
     @PostMapping("/posted")
     public Result<?> PostComment(@RequestBody Comment comment) {
@@ -55,6 +59,15 @@ public class CommentController {
         }
         return Result.fail("评论发布失败，请稍后重试2");
     }
+
+    /**
+     * 根据WebId获取对应评论
+     *
+     * @param webId
+     * @param currentPage
+     * @param pageSize
+     * @return {@link Result}<{@link ?}>
+     */
 
     @GetMapping("/getCommentByWebId/{webId}")
     public Result<?> getCommentByWebId(@PathVariable Integer webId,
@@ -102,6 +115,13 @@ public class CommentController {
             return Result.fail("获取评论失败，请稍后重试");
         }
     }
+
+    /**
+     * 删除评论
+     *
+     * @param commentId
+     * @return {@link Result}<{@link ?}>
+     */
 
     @PostMapping("/delete/{commentId}")
     public Result<?> deleteComment(@PathVariable Integer commentId){

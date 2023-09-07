@@ -1,9 +1,11 @@
 package com.example.sys.service;
 
+import com.example.common.vo.Result;
 import com.example.sys.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sys.entity.Web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,4 +21,6 @@ public interface ICategoryService extends IService<Category> {
     List<Category> getWebList();
 
     List<Category> getMainCategory();
+
+    Result<?> deleteCategory(ArrayList<Integer> list);
 }

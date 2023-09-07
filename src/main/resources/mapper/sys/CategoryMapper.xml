@@ -16,4 +16,12 @@
 
     </select>
 
+    <select id="getMainCategoryId" resultType="Integer">
+        select category_id from db_category
+        where pid is null
+    </select>
+    <select id="getExistCategoryId" resultType="Integer">
+        select DISTINCT category_id from db_web
+    </select>
+
 </mapper>

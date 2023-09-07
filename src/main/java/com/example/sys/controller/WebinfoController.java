@@ -1,5 +1,6 @@
 package com.example.sys.controller;
 
+import com.example.common.vo.Result;
 import com.example.sys.entity.Webinfo;
 import com.example.sys.service.IWebinfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,15 @@ public class WebinfoController {
     private IWebinfoService webinfoService;
 
 
+    /**
+     * 增加点击量
+     *
+     * @param webId
+     * @return {@link Result}<{@link ?}>
+     */
 
     @PostMapping("/addCount/{webId}")
-    public void addCount(@PathVariable Integer webId){
+    public Result<?> addCount(@PathVariable Integer webId){
         try {
             Webinfo webinfo = null;
             webinfo = webinfoService.getById(webId);
@@ -38,8 +45,10 @@ public class WebinfoController {
                 Webinfo newinfo = new Webinfo(webId,1);
                 webinfoService.save(newinfo);
             }
+            return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
+            return Result.fail();
         }
     }
 

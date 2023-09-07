@@ -1,6 +1,7 @@
 package com.example.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.common.vo.Result;
 import com.example.sys.entity.Category;
 import com.example.sys.entity.Web;
 import com.example.sys.mapper.CategoryMapper;
@@ -62,5 +63,25 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return allCategory;
     }
 
+    @Override
+    public Result<?> deleteCategory(ArrayList<Integer> list) {
+        //删除第一个主目录
+        list.remove(0);
+        List<Integer> mainCategory = this.baseMapper.getMainCategoryId();
+        List<Integer> existCategory = this.baseMapper.getExistCategoryId();
 
+        for (Integer i : list) {
+            if (mainCategory.contains(i)) {
+                return Result.fail("请勿删除主目录");
+            }
+            if (existCategory.contains(i)) {
+                return Result.fail("请勿删除已有Web信息的目录");
+            }
+            if (!mainCategory.contains(i) && !existCategory.contains(i)) {
+                //当list中的id不存在于mainCategory和existCategory当中时，能够进行删除操作
+                categoryMapper.deleteById(i);
+            }
+        }
+        return Result.success();
+    }
 }
